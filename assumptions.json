@@ -1,0 +1,66 @@
+{
+  "srtg_ticker": "SRTG.JK",
+  "jci_ticker": "^JKSE",
+  "holdings": [
+    {
+      "ticker": "TBIG",
+      "company": "PT Tower Bersama Infrastructure Tbk",
+      "shares_outstanding_bn": 22.59,
+      "stake_pct": 31.62,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "MDKA",
+      "company": "PT Merdeka Copper Gold Tbk",
+      "shares_outstanding_bn": 24.42,
+      "stake_pct": 19.37,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "ADRO",
+      "company": "PT Alamtri Resources Indonesia Tbk",
+      "shares_outstanding_bn": 28.80,
+      "stake_pct": 16.52,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "AADI",
+      "company": "PT Adaro Andalan Indonesia Tbk",
+      "shares_outstanding_bn": 7.79,
+      "stake_pct": 15.18,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "MPMX",
+      "company": "PT Mitra Pinasthika Mustika Tbk",
+      "shares_outstanding_bn": 4.39,
+      "stake_pct": 57.67,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "AGII",
+      "company": "PT Samator Indo Gas Tbk",
+      "shares_outstanding_bn": 3.07,
+      "stake_pct": 10.00,
+      "as_of": "2026-08-13"
+    },
+    {
+      "ticker": "NRCA",
+      "company": "PT Nusa Raya Cipta Tbk",
+      "shares_outstanding_bn": 2.50,
+      "stake_pct": 5.98,
+      "as_of": "2026-08-13"
+    }
+  ],
+  "balance_sheet": {
+    "srtg_shares_outstanding_bn": 13.55,
+    "srtg_shares_outstanding_as_of": "2026-08-13",
+    "non_listed_investment_idr_bn": 15469.238,
+    "non_listed_investment_as_of": "2026-08-13",
+    "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
+    "debt_idr_bn": 795.96,
+    "debt_as_of": "2026-08-13",
+    "cash_idr_bn": 870.895,
+    "cash_as_of": "2026-08-13"
+  }
+}

@@ -1,0 +1,15 @@
+name = "srtg-dashboard-worker"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Non-secret variables (safe to keep here). Secrets (GITHUB_TOKEN,
+# EDIT_PASSWORD) must NOT go in this file - set them with:
+#   wrangler secret put GITHUB_TOKEN
+#   wrangler secret put EDIT_PASSWORD
+# or via the Cloudflare dashboard (Workers & Pages -> your worker ->
+# Settings -> Variables and Secrets).
+[vars]
+GITHUB_OWNER = "juanabimanyu664"
+GITHUB_REPO = "srtg_dashboard"
+GITHUB_BRANCH = "main"
+ALLOWED_ORIGIN = "https://juanabimanyu664.github.io"
