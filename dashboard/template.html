@@ -614,7 +614,6 @@ function renderHoldingsAssumptions(){
       <label>${h.ticker} — ${h.company}</label>
       <input type="number" step="0.01" id="stake_${h.ticker}" value="${h.stake_pct}">
       <span>%</span>
-      <span class="as-of">as of ${fmtDMY(h.as_of)}</span>
       <button class="btn" data-save-holding="${h.ticker}">Save</button>
       <button class="btn secondary" data-reset-holding="${h.ticker}">Reset to default</button>
       <button class="btn danger" data-remove-holding="${h.ticker}" title="Remove ${h.ticker} from the portfolio">✕</button>
@@ -667,13 +666,11 @@ const BS_FIELDS = [
   {field:'srtg_shares_outstanding_bn', label:'SRTG shares outstanding (bn)'},
 ];
 BS_FIELDS.forEach(f => {
-  const asOfKey = f.field.replace(/_idr_bn$|_bn$/, '_as_of');
   const row = document.createElement('div');
   row.className = 'form-row';
   row.innerHTML = `
     <label>${f.label}</label>
     <input type="number" step="0.001" id="bs_${f.field}" value="${ASSUMPTIONS.balance_sheet[f.field]}">
-    <span class="as-of">as of ${ASSUMPTIONS.balance_sheet[asOfKey] ? fmtDMY(ASSUMPTIONS.balance_sheet[asOfKey]) : 'n/a'}</span>
     <button class="btn" data-save-bs="${f.field}">Save</button>
     <button class="btn secondary" data-reset-bs="${f.field}">Reset to default</button>
     <span class="status-msg" id="status_bs_${f.field}"></span>
