@@ -62,13 +62,15 @@
   .add-holding-grid{display:grid; grid-template-columns:repeat(4,1fr) auto; gap:10px; align-items:end; margin-top:16px;}
   .add-holding-grid label{font-size:11px; color:var(--muted); display:block; margin-bottom:4px;}
   .add-holding-grid input{width:100%; background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:7px 9px; border-radius:6px; font-size:11px; font-family:Arial,Helvetica,sans-serif;}
-  .password-row{display:flex; align-items:center; gap:10px; margin:16px 0; padding:12px; background:var(--surface2); border-radius:8px; border:1px solid var(--border);}
-  .password-row input{background:var(--bg); border:1px solid var(--border); color:var(--text); padding:6px 9px; border-radius:6px; font-size:11px; width:180px; font-family:Arial,Helvetica,sans-serif;}
   .status-msg{font-size:11px; margin-top:8px; min-height:16px;}
   .status-msg.ok{color:var(--green);}
   .status-msg.err{color:var(--red);}
   .worker-warning{background:#fbf1de; border:1px solid var(--amber); color:#8a5c0c; border-radius:8px; padding:10px 14px; font-size:11px; margin-bottom:16px; display:none;}
   .chart-annotation{position:absolute; top:42%; left:50%; transform:translate(-50%,-50%); color:var(--muted); font-size:11px; font-weight:600; pointer-events:none; background:rgba(255,255,255,0.75); padding:2px 10px; border-radius:6px;}
+  .year-select{background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:6px; font-size:11px; font-family:Arial,Helvetica,sans-serif; cursor:pointer;}
+  .btn.danger{background:transparent; color:var(--red); border:1px solid var(--red); width:26px; height:26px; padding:0; border-radius:6px; font-size:13px; line-height:1; cursor:pointer; font-weight:700;}
+  .btn.danger:hover{background:var(--red); color:#fff;}
+  tr.total-row td{font-weight:700; border-top:2px solid var(--text); color:var(--text);}
 </style>
 </head>
 <body>
@@ -99,12 +101,20 @@
       <div class="chart-wrap small">
         <canvas id="navPieChart"></canvas>
       </div>
+      <div class="section-asof" id="pieChartAsOf"></div>
     </section>
   </div>
 
   <div class="grid-2">
     <section>
-      <h2>Year-to-date (YTD) performance</h2>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
+        <h2 style="margin:0;">Performance since date</h2>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label for="ytdDateInput" style="font-size:11px; color:var(--text2);">Since:</label>
+          <input type="date" id="ytdDateInput" class="year-select">
+        </div>
+      </div>
+      <div id="ytdSinceNote" style="font-size:11px; color:var(--muted); margin-bottom:10px; min-height:14px;"></div>
       <div class="chart-wrap" id="ytdChartWrap" style="height:auto; min-height:300px;">
         <canvas id="ytdChart"></canvas>
       </div>
@@ -157,10 +167,6 @@
     <p class="source-note" style="margin:0 0 8px;">Changes here are saved permanently to <code>assumptions.json</code> in the repo (via the Cloudflare Worker) and used by everyone who opens this dashboard, starting from the next automatic refresh.</p>
     <div class="worker-warning" id="workerWarning">
       Editing is not configured yet: set <code>WORKER_URL</code> near the bottom of this file's script to your deployed Cloudflare Worker URL.
-    </div>
-    <div class="password-row">
-      <label for="editPassword" style="width:auto;">Edit password:</label>
-      <input type="password" id="editPassword" placeholder="required to save changes">
     </div>
 
     <h2 style="margin-top:24px;">Holdings - stake %</h2>
@@ -254,31 +260,60 @@ kpis.forEach(k => {
   kpiGrid.appendChild(el);
 });
 
-// "As of" labels — bottom-right corner of the two charts and the holdings table
+// "As of" labels — bottom-right corner of the charts and the holdings table
 document.getElementById('navChartAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
+document.getElementById('pieChartAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
 document.getElementById('ytdChartAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
 document.getElementById('holdingsAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
 
 // ---------- Holdings table ----------
+// Renders every listed holding, then two "bridge" rows so the % of NAV column
+// actually sums to 100%: Non-listed investments, and Net cash (cash - debt).
+// Without those two rows the visible tickers alone never add up to 100%, since
+// NAV = stake values + non-listed investment + cash - debt, and cash/debt
+// otherwise never appear as their own line.
 const hbody = document.getElementById('holdingsBody');
-LATEST.holdings.forEach(h => {
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td class="company">${h.company}</td>
-    <td class="ticker">${h.ticker}</td>
-    <td>${fmtInt(h.price_idr)}</td>
-    <td>${fmt(h.market_cap_idr_bn)}</td>
-    <td>${fmt(h.stake_pct, 2)}%</td>
-    <td>${fmt(h.stake_value_idr_bn)}</td>
-    <td>${fmt(h.pct_of_nav, 2)}%</td>`;
-  hbody.appendChild(tr);
-});
-const trOther = document.createElement('tr');
-const otherPct = LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn / LATEST.nav_idr_bn) * 100 : null;
-trOther.innerHTML = `
-  <td class="company">Non-listed investments</td><td class="ticker">—</td><td>—</td><td>—</td><td>—</td>
-  <td>${fmt(LATEST.non_listed_investment_idr_bn)}</td><td>${fmt(otherPct, 2)}%</td>`;
-hbody.appendChild(trOther);
+function renderHoldingsTable(){
+  hbody.innerHTML = '';
+  let totalPct = 0;
+
+  LATEST.holdings.forEach(h => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="company">${h.company}</td>
+      <td class="ticker">${h.ticker}</td>
+      <td>${fmtInt(h.price_idr)}</td>
+      <td>${fmt(h.market_cap_idr_bn)}</td>
+      <td>${fmt(h.stake_pct, 2)}%</td>
+      <td>${fmt(h.stake_value_idr_bn)}</td>
+      <td>${fmt(h.pct_of_nav, 2)}%</td>`;
+    hbody.appendChild(tr);
+    if(h.pct_of_nav!=null) totalPct += h.pct_of_nav;
+  });
+
+  const nonListedPct = LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn / LATEST.nav_idr_bn) * 100 : null;
+  const trOther = document.createElement('tr');
+  trOther.innerHTML = `
+    <td class="company">Non-listed investments</td><td class="ticker">—</td><td>—</td><td>—</td><td>—</td>
+    <td>${fmt(LATEST.non_listed_investment_idr_bn)}</td><td>${fmt(nonListedPct, 2)}%</td>`;
+  hbody.appendChild(trOther);
+  if(nonListedPct!=null) totalPct += nonListedPct;
+
+  const netCash = (LATEST.cash_idr_bn||0) - (LATEST.debt_idr_bn||0);
+  const netCashPct = LATEST.nav_idr_bn ? (netCash / LATEST.nav_idr_bn) * 100 : null;
+  const trCash = document.createElement('tr');
+  trCash.innerHTML = `
+    <td class="company">Net cash (cash &minus; debt)</td><td class="ticker">—</td><td>—</td><td>—</td><td>—</td>
+    <td>${fmt(netCash)}</td><td>${fmt(netCashPct, 2)}%</td>`;
+  hbody.appendChild(trCash);
+  if(netCashPct!=null) totalPct += netCashPct;
+
+  const trTotal = document.createElement('tr');
+  trTotal.className = 'total-row';
+  trTotal.innerHTML = `<td>Total</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>${fmt(totalPct, 2)}%</td>`;
+  hbody.appendChild(trTotal);
+}
+renderHoldingsTable();
 
 // ---------- NAV vs price chart ----------
 function numOrNull(v){ if(v===undefined||v===null||v==='') return null; const n=Number(v); return isNaN(n)?null:n; }
@@ -322,32 +357,71 @@ new Chart(document.getElementById('navChart'), {
 });
 
 // ---------- NAV contribution pie ----------
-const pieLabels = LATEST.holdings.map(h=>h.ticker).concat(['Non-listed']);
-const pieData = LATEST.holdings.map(h=>h.pct_of_nav||0).concat([otherPct||0]);
-const pieColors = LATEST.holdings.map((h,i)=>colorFor(h.ticker,i)).concat(['#E1E1E1']);
-new Chart(document.getElementById('navPieChart'), {
-  type:'doughnut',
-  data:{ labels: pieLabels, datasets:[{ data: pieData, backgroundColor: pieColors, borderColor:'#ffffff', borderWidth:2 }] },
-  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10 } } } }
-});
-
-// ---------- YTD performance (horizontal bar, % return) ----------
-const currentYear = new Date(LATEST.as_of_date).getFullYear();
-const ytdRows = HISTORY.filter(h => h.date.startsWith(String(currentYear)));
-const baseRow = ytdRows[0];
-function ytdPct(key){
-  const base = baseRow ? numOrNull(baseRow[key]) : null;
-  const rowsWithData = ytdRows.filter(r => numOrNull(r[key]) !== null);
-  const last = rowsWithData.length ? numOrNull(rowsWithData[rowsWithData.length-1][key]) : null;
-  if(base===null || last===null || base===0) return null;
-  return (last/base - 1) * 100;
+function nonListedPctOfNav(){
+  return LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn / LATEST.nav_idr_bn) * 100 : 0;
 }
-let ytdEntries = [
-  { label:'SRTG', pct: ytdPct('srtg_price_idr'), kind:'srtg' },
-  { label:'JCI', pct: ytdPct('jci_idx'), kind:'jci' },
-  ...LATEST.holdings.map(h => ({ label:h.ticker, pct: ytdPct(h.ticker), kind:'holding' })),
-];
-ytdEntries = ytdEntries.filter(e => e.pct !== null).sort((a,b) => a.pct - b.pct);
+// Draws each slice's % directly on the chart (white outline behind dark text
+// so it stays legible over any of the brand colors) so visitors don't have
+// to hover to read values. Slices under 3% are skipped to avoid clutter.
+const pieValueLabelPlugin = {
+  id: 'pieValueLabels',
+  afterDatasetsDraw(chart){
+    const { ctx } = chart;
+    const meta = chart.getDatasetMeta(0);
+    const data = chart.data.datasets[0].data;
+    ctx.save();
+    ctx.font = '700 11px Arial, Helvetica, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    meta.data.forEach((arc, i) => {
+      const val = data[i];
+      if(val == null || val < 3) return;
+      const angle = (arc.startAngle + arc.endAngle) / 2;
+      const radius = (arc.innerRadius + arc.outerRadius) / 2;
+      const x = arc.x + Math.cos(angle) * radius;
+      const y = arc.y + Math.sin(angle) * radius;
+      const text = val.toFixed(1) + '%';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.strokeText(text, x, y);
+      ctx.fillStyle = '#141b2d';
+      ctx.fillText(text, x, y);
+    });
+    ctx.restore();
+  }
+};
+const pieChart = new Chart(document.getElementById('navPieChart'), {
+  type:'doughnut',
+  data:{
+    labels: LATEST.holdings.map(h=>h.ticker).concat(['Non-listed']),
+    datasets:[{
+      data: LATEST.holdings.map(h=>h.pct_of_nav||0).concat([nonListedPctOfNav()||0]),
+      backgroundColor: LATEST.holdings.map((h,i)=>colorFor(h.ticker,i)).concat(['#E1E1E1']),
+      borderColor:'#ffffff', borderWidth:2
+    }]
+  },
+  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10 } } } },
+  plugins:[pieValueLabelPlugin]
+});
+function refreshPieChart(){
+  pieChart.data.labels = LATEST.holdings.map(h=>h.ticker).concat(['Non-listed']);
+  pieChart.data.datasets[0].data = LATEST.holdings.map(h=>h.pct_of_nav||0).concat([nonListedPctOfNav()||0]);
+  pieChart.data.datasets[0].backgroundColor = LATEST.holdings.map((h,i)=>colorFor(h.ticker,i)).concat(['#E1E1E1']);
+  pieChart.update();
+}
+
+// ---------- Performance since a chosen date (horizontal bar, % return) ----------
+// Date picker: any date within the range covered by HISTORY. The chart
+// shows each ticker's % return from that date (or the nearest trading day
+// on/after it, if the exact date wasn't a trading day) to the latest price.
+// Defaults to Jan 1 of the current year, i.e. plain YTD, until changed.
+const ytdDateInput = document.getElementById('ytdDateInput');
+const historyMinDate = HISTORY.length ? HISTORY[0].date : null;
+const historyMaxDate = LATEST.as_of_date;
+if(historyMinDate) ytdDateInput.min = historyMinDate;
+if(historyMaxDate) ytdDateInput.max = historyMaxDate;
+const defaultYtdDate = historyMaxDate.slice(0, 4) + '-01-01';
+ytdDateInput.value = (historyMinDate && defaultYtdDate < historyMinDate) ? historyMinDate : defaultYtdDate;
 
 const ytdBarColor = e => e.kind==='srtg' ? '#A6B1D6' : (e.kind==='jci' ? '#8496AF' : '#0B318F');
 
@@ -355,42 +429,90 @@ const ytdBarColor = e => e.kind==='srtg' ? '#A6B1D6' : (e.kind==='jci' ? '#8496A
 const ytdValueLabelPlugin = {
   id: 'ytdValueLabels',
   afterDatasetsDraw(chart){
-    const {ctx, scales:{x}} = chart;
+    const { ctx, chartArea } = chart;
     const meta = chart.getDatasetMeta(0);
     ctx.save();
     ctx.font = '600 11px Arial, Helvetica, sans-serif';
-    ctx.fillStyle = '#141b2d';
     ctx.textBaseline = 'middle';
     meta.data.forEach((bar, i) => {
       const val = chart.data.datasets[0].data[i];
       const text = (val>=0?'+':'') + val.toFixed(1) + '%';
       const goingRight = val >= 0;
-      ctx.textAlign = goingRight ? 'left' : 'right';
-      ctx.fillText(text, bar.x + (goingRight?7:-7), bar.y);
+      const textWidth = ctx.measureText(text).width;
+      const outsideX = bar.x + (goingRight ? 7 : -7);
+      // Large-magnitude bars can push the label past the plot edge into the
+      // axis tick-label gutter (garbled overlap). If there's no room to draw
+      // it outside the bar, flip it inside instead (white, near the tip).
+      const fitsOutside = goingRight
+        ? (outsideX + textWidth) <= chartArea.right
+        : (outsideX - textWidth) >= chartArea.left;
+      let x, align, color;
+      if(fitsOutside){
+        x = outsideX; align = goingRight ? 'left' : 'right'; color = '#141b2d';
+      } else {
+        x = bar.x + (goingRight ? -6 : 6); align = goingRight ? 'right' : 'left'; color = '#ffffff';
+      }
+      ctx.textAlign = align;
+      ctx.fillStyle = color;
+      ctx.fillText(text, x, bar.y);
     });
     ctx.restore();
   }
 };
 
-document.getElementById('ytdChartWrap').style.height = Math.max(260, ytdEntries.length*36 + 40) + 'px';
-new Chart(document.getElementById('ytdChart'), {
-  type:'bar',
-  data:{
-    labels: ytdEntries.map(e=>e.label),
-    datasets:[{ data: ytdEntries.map(e=>Math.round(e.pct*10)/10), backgroundColor: ytdEntries.map(ytdBarColor), borderRadius:3, barThickness:18 }]
-  },
-  options:{
-    indexAxis:'y',
-    responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => (ctx.raw>=0?'+':'') + ctx.raw.toFixed(1) + '%' } } },
-    layout:{ padding:{ right:44, left:44 } },
-    scales:{
-      x:{ grid:{color:'#E1E1E1'}, ticks:{callback:v=>v+'%'} },
-      y:{ grid:{display:false}, ticks:{color:'#141b2d', font:{size:11,weight:'600'}} }
-    }
-  },
-  plugins:[ytdValueLabelPlugin]
-});
+let ytdChartInstance = null;
+function renderYtdChart(sinceDate){
+  const rows = HISTORY.filter(h => h.date >= sinceDate);
+  const baseRow = rows[0];
+  function pctReturn(key){
+    const base = baseRow ? numOrNull(baseRow[key]) : null;
+    const rowsWithData = rows.filter(r => numOrNull(r[key]) !== null);
+    const last = rowsWithData.length ? numOrNull(rowsWithData[rowsWithData.length-1][key]) : null;
+    if(base===null || last===null || base===0) return null;
+    return (last/base - 1) * 100;
+  }
+  let entries = [
+    { label:'SRTG', pct: pctReturn('srtg_price_idr'), kind:'srtg' },
+    { label:'JCI', pct: pctReturn('jci_idx'), kind:'jci' },
+    ...LATEST.holdings.map(h => ({ label:h.ticker, pct: pctReturn(h.ticker), kind:'holding' })),
+  ];
+  entries = entries.filter(e => e.pct !== null).sort((a,b) => a.pct - b.pct);
+
+  const noteEl = document.getElementById('ytdSinceNote');
+  if(!baseRow){
+    noteEl.textContent = 'No price data on or after this date.';
+  } else if(baseRow.date !== sinceDate){
+    noteEl.textContent = `Nearest trading day used: ${fmtDMY(baseRow.date)}`;
+  } else {
+    noteEl.textContent = '';
+  }
+  document.getElementById('ytdChartAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
+
+  if(ytdChartInstance){ ytdChartInstance.destroy(); ytdChartInstance = null; }
+  document.getElementById('ytdChartWrap').style.height = Math.max(260, entries.length*36 + 40) + 'px';
+  if(!entries.length) return;
+
+  ytdChartInstance = new Chart(document.getElementById('ytdChart'), {
+    type:'bar',
+    data:{
+      labels: entries.map(e=>e.label),
+      datasets:[{ data: entries.map(e=>Math.round(e.pct*10)/10), backgroundColor: entries.map(ytdBarColor), borderRadius:3, barThickness:18 }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => (ctx.raw>=0?'+':'') + ctx.raw.toFixed(1) + '%' } } },
+      layout:{ padding:{ right:44, left:44 } },
+      scales:{
+        x:{ grid:{color:'#E1E1E1'}, ticks:{callback:v=>v+'%'} },
+        y:{ grid:{display:false}, ticks:{color:'#141b2d', font:{size:11,weight:'600'}} }
+      }
+    },
+    plugins:[ytdValueLabelPlugin]
+  });
+}
+renderYtdChart(ytdDateInput.value);
+ytdDateInput.addEventListener('change', () => { if(ytdDateInput.value) renderYtdChart(ytdDateInput.value); });
 
 // ---------- Historical tables ----------
 const tickers = LATEST.holdings.map(h=>h.ticker);
@@ -423,11 +545,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ---------- Assumptions panel ----------
 const DEFAULTS = JSON.parse(JSON.stringify(ASSUMPTIONS)); // snapshot for Reset buttons
 
-function passwordOrWarn(){
-  const pw = document.getElementById('editPassword').value;
-  if(!pw){ alert('Enter the edit password first.'); return null; }
-  if(!WORKER_URL || WORKER_URL.indexOf('REPLACE_WITH')===0){ alert('Editing is not configured yet (WORKER_URL not set).'); return null; }
-  return pw;
+function checkWorkerConfigured(){
+  if(!WORKER_URL || WORKER_URL.indexOf('REPLACE_WITH')===0){ alert('Editing is not configured yet (WORKER_URL not set).'); return false; }
+  return true;
 }
 
 async function postToWorker(path, body){
@@ -440,30 +560,36 @@ async function postToWorker(path, body){
 }
 
 const holdingsDiv = document.getElementById('holdingsAssumptions');
-ASSUMPTIONS.holdings.forEach(h => {
-  const row = document.createElement('div');
-  row.className = 'form-row';
-  row.innerHTML = `
-    <label>${h.ticker} — ${h.company}</label>
-    <input type="number" step="0.01" id="stake_${h.ticker}" value="${h.stake_pct}">
-    <span>%</span>
-    <span class="as-of">as of ${fmtDMY(h.as_of)}</span>
-    <button class="btn" data-save-holding="${h.ticker}">Save</button>
-    <button class="btn secondary" data-reset-holding="${h.ticker}">Reset to default</button>
-    <span class="status-msg" id="status_${h.ticker}"></span>
-  `;
-  holdingsDiv.appendChild(row);
-});
+function renderHoldingsAssumptions(){
+  holdingsDiv.innerHTML = '';
+  ASSUMPTIONS.holdings.forEach(h => {
+    const row = document.createElement('div');
+    row.className = 'form-row';
+    row.innerHTML = `
+      <label>${h.ticker} — ${h.company}</label>
+      <input type="number" step="0.01" id="stake_${h.ticker}" value="${h.stake_pct}">
+      <span>%</span>
+      <span class="as-of">as of ${fmtDMY(h.as_of)}</span>
+      <button class="btn" data-save-holding="${h.ticker}">Save</button>
+      <button class="btn secondary" data-reset-holding="${h.ticker}">Reset to default</button>
+      <button class="btn danger" data-remove-holding="${h.ticker}" title="Remove ${h.ticker} from the portfolio">✕</button>
+      <span class="status-msg" id="status_${h.ticker}"></span>
+    `;
+    holdingsDiv.appendChild(row);
+  });
+}
+renderHoldingsAssumptions();
 holdingsDiv.addEventListener('click', async (e) => {
   const t = e.target.dataset.saveHolding;
   const rt = e.target.dataset.resetHolding;
+  const dt = e.target.dataset.removeHolding;
   if(t){
-    const pw = passwordOrWarn(); if(!pw) return;
+    if(!checkWorkerConfigured()) return;
     const val = parseFloat(document.getElementById('stake_'+t).value);
     const statusEl = document.getElementById('status_'+t);
     statusEl.textContent = 'Saving...'; statusEl.className='status-msg';
     try{
-      await postToWorker('/save-assumption', { password: pw, action:'update_holding', payload:{ ticker:t, field:'stake_pct', value: val } });
+      await postToWorker('/save-assumption', { action:'update_holding', payload:{ ticker:t, field:'stake_pct', value: val } });
       const h = LATEST.holdings.find(x=>x.ticker===t);
       if(h){ h.stake_pct = val; recomputeAndRerenderHoldings(); }
       statusEl.textContent = 'Saved ✓'; statusEl.className='status-msg ok';
@@ -472,6 +598,19 @@ holdingsDiv.addEventListener('click', async (e) => {
   if(rt){
     const def = DEFAULTS.holdings.find(x=>x.ticker===rt);
     if(def) document.getElementById('stake_'+rt).value = def.stake_pct;
+  }
+  if(dt){
+    if(!checkWorkerConfigured()) return;
+    if(!confirm(`Remove ${dt} from the portfolio? This deletes it from assumptions.json and can't be undone from the dashboard.`)) return;
+    const statusEl = document.getElementById('status_'+dt);
+    statusEl.textContent = 'Removing...'; statusEl.className='status-msg';
+    try{
+      await postToWorker('/save-assumption', { action:'remove_holding', payload:{ ticker: dt } });
+      ASSUMPTIONS.holdings = ASSUMPTIONS.holdings.filter(x=>x.ticker!==dt);
+      LATEST.holdings = LATEST.holdings.filter(x=>x.ticker!==dt);
+      renderHoldingsAssumptions();
+      recomputeAndRerenderHoldings();
+    }catch(err){ statusEl.textContent = 'Error: ' + err.message; statusEl.className='status-msg err'; }
   }
 });
 
@@ -500,12 +639,12 @@ bsDiv.addEventListener('click', async (e) => {
   const f = e.target.dataset.saveBs;
   const rf = e.target.dataset.resetBs;
   if(f){
-    const pw = passwordOrWarn(); if(!pw) return;
+    if(!checkWorkerConfigured()) return;
     const val = parseFloat(document.getElementById('bs_'+f).value);
     const statusEl = document.getElementById('status_bs_'+f);
     statusEl.textContent = 'Saving...'; statusEl.className='status-msg';
     try{
-      await postToWorker('/save-assumption', { password: pw, action:'update_balance_sheet', payload:{ field:f, value: val } });
+      await postToWorker('/save-assumption', { action:'update_balance_sheet', payload:{ field:f, value: val } });
       if(f==='debt_idr_bn') LATEST.debt_idr_bn = val;
       if(f==='cash_idr_bn') LATEST.cash_idr_bn = val;
       if(f==='non_listed_investment_idr_bn') LATEST.non_listed_investment_idr_bn = val;
@@ -550,23 +689,13 @@ function recomputeAndRerenderHoldings(){
     el.innerHTML = `<div class="label">${k.label}</div><div class="value">${k.value}</div><div class="sub">${k.sub}</div>`;
     kpiGrid.appendChild(el);
   });
-  hbody.innerHTML = '';
-  LATEST.holdings.forEach(h => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="company">${h.company}</td><td class="ticker">${h.ticker}</td><td>${fmtInt(h.price_idr)}</td>
-      <td>${fmt(h.market_cap_idr_bn)}</td><td>${fmt(h.stake_pct,2)}%</td><td>${fmt(h.stake_value_idr_bn)}</td><td>${fmt(h.pct_of_nav,2)}%</td>`;
-    hbody.appendChild(tr);
-  });
-  const otherPct2 = LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn/LATEST.nav_idr_bn)*100 : null;
-  const trOther2 = document.createElement('tr');
-  trOther2.innerHTML = `<td class="company">Non-listed investments</td><td class="ticker">—</td><td>—</td><td>—</td><td>—</td>
-    <td>${fmt(LATEST.non_listed_investment_idr_bn)}</td><td>${fmt(otherPct2,2)}%</td>`;
-  hbody.appendChild(trOther2);
+  renderHoldingsTable();
+  refreshPieChart();
 }
 
 // ---------- Add holding ----------
 document.getElementById('addHoldingBtn').addEventListener('click', async () => {
-  const pw = passwordOrWarn(); if(!pw) return;
+  if(!checkWorkerConfigured()) return;
   const ticker = document.getElementById('newTicker').value.trim().toUpperCase();
   const company = document.getElementById('newCompany').value.trim();
   const shares = parseFloat(document.getElementById('newShares').value);
@@ -577,7 +706,7 @@ document.getElementById('addHoldingBtn').addEventListener('click', async () => {
   }
   statusEl.textContent = 'Saving...'; statusEl.className='status-msg';
   try{
-    await postToWorker('/add-holding', { password: pw, ticker, company, shares_outstanding_bn: shares, stake_pct: stake });
+    await postToWorker('/add-holding', { ticker, company, shares_outstanding_bn: shares, stake_pct: stake });
     statusEl.textContent = `Added ${ticker} ✓ — it will start showing prices after the next scheduled/manual refresh.`;
     statusEl.className='status-msg ok';
     document.getElementById('newTicker').value=''; document.getElementById('newCompany').value='';
