@@ -109,9 +109,15 @@
     <section>
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; flex-wrap:wrap; gap:8px;">
         <h2 style="margin:0;">Performance since date</h2>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <label for="ytdDateInput" style="font-size:11px; color:var(--text2);">Since:</label>
-          <input type="date" id="ytdDateInput" class="year-select">
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="ytdSinceInput" style="font-size:11px; color:var(--text2);">Since:</label>
+            <input type="date" id="ytdSinceInput" class="year-select">
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label for="ytdUntilInput" style="font-size:11px; color:var(--text2);">Until:</label>
+            <input type="date" id="ytdUntilInput" class="year-select">
+          </div>
         </div>
       </div>
       <div id="ytdSinceNote" style="font-size:11px; color:var(--muted); margin-bottom:10px; min-height:14px;"></div>
@@ -360,9 +366,10 @@ new Chart(document.getElementById('navChart'), {
 function nonListedPctOfNav(){
   return LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn / LATEST.nav_idr_bn) * 100 : 0;
 }
-// Draws each slice's % directly on the chart (white outline behind dark text
-// so it stays legible over any of the brand colors) so visitors don't have
-// to hover to read values. Slices under 3% are skipped to avoid clutter.
+// Draws each slice's % outside the ring, connected by a short leader line,
+// so visitors don't have to hover to read values and the text never sits on
+// top of (and gets lost against) the slice colors. Slices under 3% are
+// skipped to avoid clutter — they're still readable via hover/legend.
 const pieValueLabelPlugin = {
   id: 'pieValueLabels',
   afterDatasetsDraw(chart){
@@ -371,21 +378,30 @@ const pieValueLabelPlugin = {
     const data = chart.data.datasets[0].data;
     ctx.save();
     ctx.font = '700 11px Arial, Helvetica, sans-serif';
-    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     meta.data.forEach((arc, i) => {
       const val = data[i];
       if(val == null || val < 3) return;
       const angle = (arc.startAngle + arc.endAngle) / 2;
-      const radius = (arc.innerRadius + arc.outerRadius) / 2;
-      const x = arc.x + Math.cos(angle) * radius;
-      const y = arc.y + Math.sin(angle) * radius;
+      const outerR = arc.outerRadius;
+      const anchorX = arc.x + Math.cos(angle) * outerR;
+      const anchorY = arc.y + Math.sin(angle) * outerR;
+      const lineEndX = arc.x + Math.cos(angle) * (outerR + 14);
+      const lineEndY = arc.y + Math.sin(angle) * (outerR + 14);
+      const onRight = Math.cos(angle) >= 0;
+      const labelX = lineEndX + (onRight ? 4 : -4);
       const text = val.toFixed(1) + '%';
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
-      ctx.strokeText(text, x, y);
+
+      ctx.strokeStyle = 'rgba(20,27,45,0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(anchorX, anchorY);
+      ctx.lineTo(lineEndX, lineEndY);
+      ctx.stroke();
+
+      ctx.textAlign = onRight ? 'left' : 'right';
       ctx.fillStyle = '#141b2d';
-      ctx.fillText(text, x, y);
+      ctx.fillText(text, labelX, lineEndY);
     });
     ctx.restore();
   }
@@ -400,7 +416,11 @@ const pieChart = new Chart(document.getElementById('navPieChart'), {
       borderColor:'#ffffff', borderWidth:2
     }]
   },
-  options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10 } } } },
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'55%',
+    layout:{ padding:{ top:34, bottom:8, left:44, right:44 } },
+    plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10 } } }
+  },
   plugins:[pieValueLabelPlugin]
 });
 function refreshPieChart(){
@@ -410,18 +430,23 @@ function refreshPieChart(){
   pieChart.update();
 }
 
-// ---------- Performance since a chosen date (horizontal bar, % return) ----------
-// Date picker: any date within the range covered by HISTORY. The chart
-// shows each ticker's % return from that date (or the nearest trading day
-// on/after it, if the exact date wasn't a trading day) to the latest price.
-// Defaults to Jan 1 of the current year, i.e. plain YTD, until changed.
-const ytdDateInput = document.getElementById('ytdDateInput');
+// ---------- Performance over a chosen date range (horizontal bar, % return) ----------
+// Since/Until pickers: any dates within the range covered by HISTORY. The
+// chart shows each ticker's % return between those two dates (or the
+// nearest trading days on/after "since" and on/before "until", if the exact
+// dates weren't trading days). Defaults to Jan 1 of the current year through
+// the latest available date, i.e. plain YTD, until changed.
+const ytdSinceInput = document.getElementById('ytdSinceInput');
+const ytdUntilInput = document.getElementById('ytdUntilInput');
 const historyMinDate = HISTORY.length ? HISTORY[0].date : null;
 const historyMaxDate = LATEST.as_of_date;
-if(historyMinDate) ytdDateInput.min = historyMinDate;
-if(historyMaxDate) ytdDateInput.max = historyMaxDate;
+[ytdSinceInput, ytdUntilInput].forEach(el => {
+  if(historyMinDate) el.min = historyMinDate;
+  if(historyMaxDate) el.max = historyMaxDate;
+});
 const defaultYtdDate = historyMaxDate.slice(0, 4) + '-01-01';
-ytdDateInput.value = (historyMinDate && defaultYtdDate < historyMinDate) ? historyMinDate : defaultYtdDate;
+ytdSinceInput.value = (historyMinDate && defaultYtdDate < historyMinDate) ? historyMinDate : defaultYtdDate;
+ytdUntilInput.value = historyMaxDate;
 
 const ytdBarColor = e => e.kind==='srtg' ? '#A6B1D6' : (e.kind==='jci' ? '#8496AF' : '#0B318F');
 
@@ -429,8 +454,9 @@ const ytdBarColor = e => e.kind==='srtg' ? '#A6B1D6' : (e.kind==='jci' ? '#8496A
 const ytdValueLabelPlugin = {
   id: 'ytdValueLabels',
   afterDatasetsDraw(chart){
-    const { ctx, chartArea } = chart;
+    const { ctx, chartArea, scales } = chart;
     const meta = chart.getDatasetMeta(0);
+    const zeroX = scales.x.getPixelForValue(0);
     ctx.save();
     ctx.font = '600 11px Arial, Helvetica, sans-serif';
     ctx.textBaseline = 'middle';
@@ -441,16 +467,24 @@ const ytdValueLabelPlugin = {
       const textWidth = ctx.measureText(text).width;
       const outsideX = bar.x + (goingRight ? 7 : -7);
       // Large-magnitude bars can push the label past the plot edge into the
-      // axis tick-label gutter (garbled overlap). If there's no room to draw
-      // it outside the bar, flip it inside instead (white, near the tip).
+      // axis tick-label gutter (garbled overlap) - try drawing inside the bar
+      // instead (white). But a wide-range chart (one huge outlier bar) can
+      // also make small bars very short in pixels, too short to even hold
+      // white text - in that case white-on-white would go invisible, so
+      // clamp to the plot boundary in dark text as a last resort instead.
       const fitsOutside = goingRight
         ? (outsideX + textWidth) <= chartArea.right
         : (outsideX - textWidth) >= chartArea.left;
+      const barWidthPx = Math.abs(bar.x - zeroX);
+      const fitsInside = (textWidth + 10) <= barWidthPx;
       let x, align, color;
       if(fitsOutside){
         x = outsideX; align = goingRight ? 'left' : 'right'; color = '#141b2d';
-      } else {
+      } else if(fitsInside){
         x = bar.x + (goingRight ? -6 : 6); align = goingRight ? 'right' : 'left'; color = '#ffffff';
+      } else {
+        x = goingRight ? chartArea.right - 2 : chartArea.left + 2;
+        align = goingRight ? 'right' : 'left'; color = '#141b2d';
       }
       ctx.textAlign = align;
       ctx.fillStyle = color;
@@ -461,9 +495,10 @@ const ytdValueLabelPlugin = {
 };
 
 let ytdChartInstance = null;
-function renderYtdChart(sinceDate){
-  const rows = HISTORY.filter(h => h.date >= sinceDate);
+function renderYtdChart(sinceDate, untilDate){
+  const rows = HISTORY.filter(h => h.date >= sinceDate && h.date <= untilDate);
   const baseRow = rows[0];
+  const endRow = rows.length ? rows[rows.length-1] : null;
   function pctReturn(key){
     const base = baseRow ? numOrNull(baseRow[key]) : null;
     const rowsWithData = rows.filter(r => numOrNull(r[key]) !== null);
@@ -479,14 +514,15 @@ function renderYtdChart(sinceDate){
   entries = entries.filter(e => e.pct !== null).sort((a,b) => a.pct - b.pct);
 
   const noteEl = document.getElementById('ytdSinceNote');
-  if(!baseRow){
-    noteEl.textContent = 'No price data on or after this date.';
-  } else if(baseRow.date !== sinceDate){
-    noteEl.textContent = `Nearest trading day used: ${fmtDMY(baseRow.date)}`;
+  if(!baseRow || sinceDate > untilDate){
+    noteEl.textContent = sinceDate > untilDate ? '"Since" must be before "until".' : 'No price data in this date range.';
   } else {
-    noteEl.textContent = '';
+    const bits = [];
+    if(baseRow.date !== sinceDate) bits.push(`since → nearest trading day ${fmtDMY(baseRow.date)}`);
+    if(endRow && endRow.date !== untilDate) bits.push(`until → nearest trading day ${fmtDMY(endRow.date)}`);
+    noteEl.textContent = bits.join(' · ');
   }
-  document.getElementById('ytdChartAsOf').textContent = 'As of ' + fmtDMY(LATEST.as_of_date);
+  document.getElementById('ytdChartAsOf').textContent = endRow ? ('As of ' + fmtDMY(endRow.date)) : '';
 
   if(ytdChartInstance){ ytdChartInstance.destroy(); ytdChartInstance = null; }
   document.getElementById('ytdChartWrap').style.height = Math.max(260, entries.length*36 + 40) + 'px';
@@ -511,8 +547,12 @@ function renderYtdChart(sinceDate){
     plugins:[ytdValueLabelPlugin]
   });
 }
-renderYtdChart(ytdDateInput.value);
-ytdDateInput.addEventListener('change', () => { if(ytdDateInput.value) renderYtdChart(ytdDateInput.value); });
+renderYtdChart(ytdSinceInput.value, ytdUntilInput.value);
+[ytdSinceInput, ytdUntilInput].forEach(el => {
+  el.addEventListener('change', () => {
+    if(ytdSinceInput.value && ytdUntilInput.value) renderYtdChart(ytdSinceInput.value, ytdUntilInput.value);
+  });
+});
 
 // ---------- Historical tables ----------
 const tickers = LATEST.holdings.map(h=>h.ticker);
