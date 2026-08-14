@@ -6,8 +6,8 @@
       "ticker": "TBIG",
       "company": "PT Tower Bersama Infrastructure Tbk",
       "shares_outstanding_bn": 22.59,
-      "stake_pct": 31.62,
-      "as_of": "2026-08-13"
+      "stake_pct": 31.6,
+      "as_of": "2026-08-14"
     },
     {
       "ticker": "MDKA",
@@ -19,7 +19,7 @@
     {
       "ticker": "ADRO",
       "company": "PT Alamtri Resources Indonesia Tbk",
-      "shares_outstanding_bn": 28.80,
+      "shares_outstanding_bn": 28.8,
       "stake_pct": 16.52,
       "as_of": "2026-08-13"
     },
@@ -41,13 +41,13 @@
       "ticker": "AGII",
       "company": "PT Samator Indo Gas Tbk",
       "shares_outstanding_bn": 3.07,
-      "stake_pct": 10.00,
+      "stake_pct": 10,
       "as_of": "2026-08-13"
     },
     {
       "ticker": "NRCA",
       "company": "PT Nusa Raya Cipta Tbk",
-      "shares_outstanding_bn": 2.50,
+      "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
       "as_of": "2026-08-13"
     }
