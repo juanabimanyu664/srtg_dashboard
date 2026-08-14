@@ -23,7 +23,7 @@ script only reads/writes local files.
 import csv
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import yfinance as yf
 
@@ -34,6 +34,19 @@ LATEST_JSON = os.path.join(BASE_DIR, "latest.json")
 TEMPLATE_FILE = os.path.join(BASE_DIR, "dashboard", "template.html")
 OUTPUT_HTML = os.path.join(BASE_DIR, "index.html")
 
+# Jakarta (WIB) is a fixed UTC+7 offset year-round - no DST to worry about.
+WIB_OFFSET = timedelta(hours=7)
+# IDX's regular session ends ~15:49-16:00 WIB. Use 16:00 as a safe cutoff:
+# before this, treat today's Yahoo Finance bar (if present) as a live/partial
+# price, not a finished close, and fall back to the prior confirmed close
+# instead. This protects against manual "Run workflow" triggers during
+# market hours recording an unfinished day's price as if it were final.
+MARKET_CLOSE_HOUR_WIB = 16
+
+
+def now_wib() -> datetime:
+    return datetime.now(timezone.utc) + WIB_OFFSET
+
 
 def load_assumptions() -> dict:
     with open(ASSUMPTIONS_FILE, "r") as f:
@@ -41,12 +54,27 @@ def load_assumptions() -> dict:
 
 
 def fetch_last_close(ticker: str):
-    """Fetch the most recent daily close for a ticker. Returns (price, date_str) or (None, None)."""
+    """Fetch the most recent CONFIRMED daily close for a ticker.
+
+    If today's IDX session hasn't closed yet (before 16:00 WIB) and Yahoo's
+    latest bar is dated today, that bar is a live/partial price, not a
+    finished close - fall back to the prior trading day's close instead so
+    history.csv only ever records completed sessions. Returns
+    (price, date_str) or (None, None).
+    """
     try:
         t = yf.Ticker(ticker)
         hist = t.history(period="5d", interval="1d", auto_adjust=False)
         if hist.empty:
             return None, None
+
+        today_wib = now_wib().strftime("%Y-%m-%d")
+        if hist.index[-1].strftime("%Y-%m-%d") == today_wib and now_wib().hour < MARKET_CLOSE_HOUR_WIB:
+            print(f"  Market not yet closed ({now_wib().strftime('%H:%M')} WIB) - using prior close instead of today's partial price")
+            hist = hist.iloc[:-1]
+            if hist.empty:
+                return None, None
+
         last = hist.iloc[-1]
         price = float(last["Close"])
         date_str = hist.index[-1].strftime("%Y-%m-%d")
