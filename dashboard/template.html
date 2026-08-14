@@ -98,7 +98,7 @@
 
     <section>
       <h2>% contribution to NAV</h2>
-      <div class="chart-wrap small">
+      <div class="chart-wrap" style="height:380px;">
         <canvas id="navPieChart"></canvas>
       </div>
       <div class="section-asof" id="pieChartAsOf"></div>
@@ -283,7 +283,12 @@ function renderHoldingsTable(){
   hbody.innerHTML = '';
   let totalPct = 0;
 
+  // Recompute each row's % of NAV fresh from stake_value/nav here (rather
+  // than summing the already-2-decimal-rounded pct_of_nav field from
+  // latest.json) so the Total below lands on 100.00% instead of drifting to
+  // 99.99%/100.01% from accumulated independent rounding.
   LATEST.holdings.forEach(h => {
+    const freshPct = (LATEST.nav_idr_bn && h.stake_value_idr_bn!=null) ? (h.stake_value_idr_bn/LATEST.nav_idr_bn)*100 : null;
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td class="company">${h.company}</td>
@@ -292,9 +297,9 @@ function renderHoldingsTable(){
       <td>${fmt(h.market_cap_idr_bn)}</td>
       <td>${fmt(h.stake_pct, 2)}%</td>
       <td>${fmt(h.stake_value_idr_bn)}</td>
-      <td>${fmt(h.pct_of_nav, 2)}%</td>`;
+      <td>${fmt(freshPct, 2)}%</td>`;
     hbody.appendChild(tr);
-    if(h.pct_of_nav!=null) totalPct += h.pct_of_nav;
+    if(freshPct!=null) totalPct += freshPct;
   });
 
   const nonListedPct = LATEST.nav_idr_bn ? (LATEST.non_listed_investment_idr_bn / LATEST.nav_idr_bn) * 100 : null;
@@ -381,7 +386,7 @@ const pieValueLabelPlugin = {
     ctx.textBaseline = 'middle';
     meta.data.forEach((arc, i) => {
       const val = data[i];
-      if(val == null || val < 3) return;
+      if(val == null || val < 1) return;
       const angle = (arc.startAngle + arc.endAngle) / 2;
       const outerR = arc.outerRadius;
       const anchorX = arc.x + Math.cos(angle) * outerR;
@@ -418,8 +423,8 @@ const pieChart = new Chart(document.getElementById('navPieChart'), {
   },
   options:{
     responsive:true, maintainAspectRatio:false, cutout:'55%',
-    layout:{ padding:{ top:34, bottom:8, left:44, right:44 } },
-    plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10 } } }
+    layout:{ padding:{ top:34, bottom:34, left:44, right:44 } },
+    plugins:{ legend:{ position:'bottom', labels:{ boxWidth:10, padding:16 } } }
   },
   plugins:[pieValueLabelPlugin]
 });
