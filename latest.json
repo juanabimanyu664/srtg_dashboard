@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-17T12:09:30Z",
+  "generated_at_utc": "2026-08-17T12:11:06Z",
   "as_of_date": "2026-08-14",
   "holdings": [
     {
@@ -11,7 +11,7 @@
       "market_cap_idr_bn": 31513.05,
       "stake_value_idr_bn": 9964.43,
       "as_of": "2026-08-14",
-      "pct_of_nav": 15.11
+      "pct_of_nav": 12.67
     },
     {
       "ticker": "MDKA",
@@ -22,7 +22,7 @@
       "market_cap_idr_bn": 70818.0,
       "stake_value_idr_bn": 13717.45,
       "as_of": "2026-08-13",
-      "pct_of_nav": 20.81
+      "pct_of_nav": 17.45
     },
     {
       "ticker": "ADRO",
@@ -33,7 +33,7 @@
       "market_cap_idr_bn": 72864.0,
       "stake_value_idr_bn": 12037.13,
       "as_of": "2026-08-13",
-      "pct_of_nav": 18.26
+      "pct_of_nav": 15.31
     },
     {
       "ticker": "AADI",
@@ -44,7 +44,7 @@
       "market_cap_idr_bn": 73420.75,
       "stake_value_idr_bn": 11145.27,
       "as_of": "2026-08-13",
-      "pct_of_nav": 16.91
+      "pct_of_nav": 14.17
     },
     {
       "ticker": "MPMX",
@@ -55,7 +55,7 @@
       "market_cap_idr_bn": 4411.95,
       "stake_value_idr_bn": 2544.37,
       "as_of": "2026-08-16",
-      "pct_of_nav": 3.86
+      "pct_of_nav": 3.24
     },
     {
       "ticker": "AGII",
@@ -66,7 +66,7 @@
       "market_cap_idr_bn": 8964.4,
       "stake_value_idr_bn": 896.44,
       "as_of": "2026-08-13",
-      "pct_of_nav": 1.36
+      "pct_of_nav": 1.14
     },
     {
       "ticker": "NRCA",
@@ -77,21 +77,32 @@
       "market_cap_idr_bn": 1325.0,
       "stake_value_idr_bn": 79.24,
       "as_of": "2026-08-14",
-      "pct_of_nav": 0.12
+      "pct_of_nav": 0.1
+    },
+    {
+      "ticker": "BBCA",
+      "company": "PT Bank Central Asia",
+      "price_idr": 6350.0,
+      "shares_outstanding_bn": 20,
+      "stake_pct": 10,
+      "market_cap_idr_bn": 127000.0,
+      "stake_value_idr_bn": 12700.0,
+      "as_of": "2026-08-17",
+      "pct_of_nav": 16.15
     }
   ],
-  "total_stake_value_idr_bn": 50384.32,
+  "total_stake_value_idr_bn": 63084.32,
   "non_listed_investment_idr_bn": 15469.238,
   "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
   "debt_idr_bn": 795.96,
   "debt_as_of": "2026-08-13",
   "cash_idr_bn": 870.895,
   "cash_as_of": "2026-08-13",
-  "nav_idr_bn": 65928.5,
+  "nav_idr_bn": 78628.5,
   "srtg_shares_outstanding_bn": 13.55,
-  "nav_per_share_idr": 4865.57,
+  "nav_per_share_idr": 5802.84,
   "srtg_price_idr": 1840.0,
   "srtg_market_cap_idr_bn": 24932.0,
-  "discount_to_nav_pct": 62.18,
+  "discount_to_nav_pct": 68.29,
   "jci_idx": 6401.88818359375
 }
