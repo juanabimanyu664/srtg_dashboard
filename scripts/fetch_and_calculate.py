@@ -151,6 +151,44 @@ def calculate(assumptions: dict, prices: dict, srtg_price, srtg_date, jci_price)
     return result
 
 
+def backfill_new_tickers(holdings_order, existing_rows):
+    """For any ticker that has no price recorded anywhere in history.csv yet
+    (i.e. it was just added to assumptions.json), fetch its full daily-close
+    history back to the earliest date already in the file and merge it in,
+    in place, on existing_rows. This means a newly added holding shows up
+    in the dashboard's Performance chart with real historical prices from
+    day one, instead of a single flat data point that only starts growing
+    from today onward. Rows are matched by exact date string, so a handful
+    of rows may stay blank if the new ticker's trading calendar has a gap
+    (e.g. a listing halt) that doesn't line up with an existing row's date -
+    that's fine, the dashboard already treats missing cells as "no data yet"
+    for that date.
+    """
+    if not existing_rows:
+        return  # first ever run - nothing to backfill against yet
+    earliest_date = existing_rows[0]["date"]
+    for ticker in holdings_order:
+        already_has_data = any(r.get(ticker) for r in existing_rows)
+        if already_has_data:
+            continue
+        print(f"  Backfilling historical prices for newly added ticker {ticker} (back to {earliest_date})...")
+        try:
+            hist = yf.Ticker(ticker + ".JK").history(start=earliest_date, interval="1d", auto_adjust=False)
+            if hist.empty:
+                print(f"    No historical data available for {ticker}.JK")
+                continue
+            price_by_date = {idx.strftime("%Y-%m-%d"): float(r["Close"]) for idx, r in hist.iterrows()}
+            filled = 0
+            for r in existing_rows:
+                price = price_by_date.get(r["date"])
+                if price is not None:
+                    r[ticker] = price
+                    filled += 1
+            print(f"    Backfilled {filled} historical rows for {ticker}")
+        except Exception as e:
+            print(f"    FAIL backfilling {ticker}: {e}")
+
+
 def append_history(result: dict, holdings_order):
     row = {
         "date": result["as_of_date"],
@@ -165,41 +203,33 @@ def append_history(result: dict, holdings_order):
 
     fieldnames = ["date", "srtg_price_idr"] + holdings_order + ["jci_idx", "nav_idr_bn", "nav_per_share_idr", "discount_to_nav_pct"]
 
-    file_exists = os.path.isfile(HISTORY_CSV)
     existing_rows = []
-    if file_exists:
+    if os.path.isfile(HISTORY_CSV):
         with open(HISTORY_CSV, newline="") as f:
-            reader = csv.DictReader(f)
-            existing_fieldnames = reader.fieldnames
-            existing_rows = list(reader)
-            # If a new ticker was added, existing_fieldnames won't have it -
-            # rewrite the whole file with the new schema (old rows get blanks).
-            if existing_fieldnames != fieldnames:
-                file_exists = False  # force full rewrite below
+            existing_rows = list(csv.DictReader(f))
 
-    if not file_exists:
-        with open(HISTORY_CSV, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=fieldnames)
-            w.writeheader()
-            for r in existing_rows:
-                w.writerow({k: r.get(k, "") for k in fieldnames})
-            # Skip appending duplicate for today if already the last row
-            if not existing_rows or existing_rows[-1].get("date") != row["date"]:
-                w.writerow(row)
-        return
+    backfill_new_tickers(holdings_order, existing_rows)
 
-    # Same schema - just append (avoid duplicate rows for the same date on reruns)
-    with open(HISTORY_CSV, newline="") as f:
-        last_date = None
-        for r in csv.DictReader(f):
-            last_date = r["date"]
-    if last_date == row["date"]:
-        print(f"  history.csv already has a row for {row['date']}, skipping append")
-        return
+    if existing_rows and existing_rows[-1].get("date") == row["date"]:
+        # Same trading date as the last recorded row - this happens when a
+        # holding is added/removed on a day whose fetched price is just a
+        # repeat of the last close (e.g. a weekend, or before today's IDX
+        # close). Replace that last row instead of leaving it untouched:
+        # if we just skipped it, a newly added ticker's column would stay
+        # permanently blank for that date until the next genuinely new
+        # trading day, which would hide it from the dashboard's Performance
+        # chart. Rewriting is safe even when nothing changed, since the
+        # recomputed values for an unchanged day are the same.
+        print(f"  history.csv already has a row for {row['date']} - refreshing it (e.g. a newly added/removed holding)")
+        existing_rows[-1] = row
+    else:
+        existing_rows.append(row)
 
-    with open(HISTORY_CSV, "a", newline="") as f:
+    with open(HISTORY_CSV, "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
-        w.writerow(row)
+        w.writeheader()
+        for r in existing_rows:
+            w.writerow({k: r.get(k, "") for k in fieldnames})
 
 
 def build_dashboard(result: dict):
