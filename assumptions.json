@@ -50,6 +50,13 @@
       "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
       "as_of": "2026-08-14"
+    },
+    {
+      "ticker": "BBCA",
+      "company": "BCA",
+      "shares_outstanding_bn": 10,
+      "stake_pct": 10,
+      "as_of": "2026-08-17"
     }
   ],
   "balance_sheet": {
