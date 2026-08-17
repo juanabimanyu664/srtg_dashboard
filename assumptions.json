@@ -57,6 +57,13 @@
       "shares_outstanding_bn": 20,
       "stake_pct": 10,
       "as_of": "2026-08-17"
+    },
+    {
+      "ticker": "BBNI",
+      "company": "BNI",
+      "shares_outstanding_bn": 10,
+      "stake_pct": 10,
+      "as_of": "2026-08-17"
     }
   ],
   "balance_sheet": {
