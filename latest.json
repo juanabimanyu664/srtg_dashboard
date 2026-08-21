@@ -1,50 +1,50 @@
 {
-  "generated_at_utc": "2026-08-20T10:59:11Z",
-  "as_of_date": "2026-08-20",
+  "generated_at_utc": "2026-08-21T10:59:40Z",
+  "as_of_date": "2026-08-21",
   "holdings": [
     {
       "ticker": "TBIG",
       "company": "PT Tower Bersama Infrastructure Tbk",
-      "price_idr": 1410.0,
+      "price_idr": 1450.0,
       "shares_outstanding_bn": 22.59,
       "stake_pct": 31.62,
-      "market_cap_idr_bn": 31851.9,
-      "stake_value_idr_bn": 10071.57,
+      "market_cap_idr_bn": 32755.5,
+      "stake_value_idr_bn": 10357.29,
       "as_of": "2026-08-14",
-      "pct_of_nav": 15.05
+      "pct_of_nav": 15.43
     },
     {
       "ticker": "MDKA",
       "company": "PT Merdeka Copper Gold Tbk",
-      "price_idr": 2940.0,
+      "price_idr": 2950.0,
       "shares_outstanding_bn": 24.42,
       "stake_pct": 19.37,
-      "market_cap_idr_bn": 71794.8,
-      "stake_value_idr_bn": 13906.65,
+      "market_cap_idr_bn": 72039.0,
+      "stake_value_idr_bn": 13953.95,
       "as_of": "2026-08-13",
-      "pct_of_nav": 20.77
+      "pct_of_nav": 20.79
     },
     {
       "ticker": "ADRO",
       "company": "PT Alamtri Resources Indonesia Tbk",
-      "price_idr": 2560.0,
+      "price_idr": 2550.0,
       "shares_outstanding_bn": 28.8,
       "stake_pct": 16.52,
-      "market_cap_idr_bn": 73728.0,
-      "stake_value_idr_bn": 12179.87,
+      "market_cap_idr_bn": 73440.0,
+      "stake_value_idr_bn": 12132.29,
       "as_of": "2026-08-13",
-      "pct_of_nav": 18.19
+      "pct_of_nav": 18.08
     },
     {
       "ticker": "AADI",
       "company": "PT Adaro Andalan Indonesia Tbk",
-      "price_idr": 9900.0,
+      "price_idr": 9800.0,
       "shares_outstanding_bn": 7.79,
       "stake_pct": 15.18,
-      "market_cap_idr_bn": 77121.0,
-      "stake_value_idr_bn": 11706.97,
+      "market_cap_idr_bn": 76342.0,
+      "stake_value_idr_bn": 11588.72,
       "as_of": "2026-08-13",
-      "pct_of_nav": 17.49
+      "pct_of_nav": 17.27
     },
     {
       "ticker": "MPMX",
@@ -55,43 +55,43 @@
       "market_cap_idr_bn": 4455.85,
       "stake_value_idr_bn": 2569.69,
       "as_of": "2026-08-16",
-      "pct_of_nav": 3.84
+      "pct_of_nav": 3.83
     },
     {
       "ticker": "AGII",
       "company": "PT Samator Indo Gas Tbk",
-      "price_idr": 2870.0,
+      "price_idr": 2880.0,
       "shares_outstanding_bn": 3.07,
       "stake_pct": 10,
-      "market_cap_idr_bn": 8810.9,
-      "stake_value_idr_bn": 881.09,
+      "market_cap_idr_bn": 8841.6,
+      "stake_value_idr_bn": 884.16,
       "as_of": "2026-08-13",
       "pct_of_nav": 1.32
     },
     {
       "ticker": "NRCA",
       "company": "PT Nusa Raya Cipta Tbk",
-      "price_idr": 545.0,
+      "price_idr": 575.0,
       "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
-      "market_cap_idr_bn": 1362.5,
-      "stake_value_idr_bn": 81.48,
+      "market_cap_idr_bn": 1437.5,
+      "stake_value_idr_bn": 85.96,
       "as_of": "2026-08-14",
-      "pct_of_nav": 0.12
+      "pct_of_nav": 0.13
     }
   ],
-  "total_stake_value_idr_bn": 51397.31,
+  "total_stake_value_idr_bn": 51572.06,
   "non_listed_investment_idr_bn": 15469.238,
   "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
   "debt_idr_bn": 795.96,
   "debt_as_of": "2026-08-17",
   "cash_idr_bn": 870.895,
   "cash_as_of": "2026-08-13",
-  "nav_idr_bn": 66941.49,
+  "nav_idr_bn": 67116.23,
   "srtg_shares_outstanding_bn": 13.55,
-  "nav_per_share_idr": 4940.33,
-  "srtg_price_idr": 1925.0,
-  "srtg_market_cap_idr_bn": 26083.75,
-  "discount_to_nav_pct": 61.04,
-  "jci_idx": 6501.5849609375
+  "nav_per_share_idr": 4953.23,
+  "srtg_price_idr": 1915.0,
+  "srtg_market_cap_idr_bn": 25948.25,
+  "discount_to_nav_pct": 61.34,
+  "jci_idx": 6525.68994140625
 }
