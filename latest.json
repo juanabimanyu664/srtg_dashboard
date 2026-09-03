@@ -1,97 +1,97 @@
 {
-  "generated_at_utc": "2026-09-02T14:39:07Z",
-  "as_of_date": "2026-09-02",
+  "generated_at_utc": "2026-09-03T14:42:10Z",
+  "as_of_date": "2026-09-03",
   "holdings": [
     {
       "ticker": "TBIG",
       "company": "PT Tower Bersama Infrastructure Tbk",
-      "price_idr": 1455.0,
+      "price_idr": 1510.0,
       "shares_outstanding_bn": 22.59,
       "stake_pct": 31.62,
-      "market_cap_idr_bn": 32868.45,
-      "stake_value_idr_bn": 10393.0,
+      "market_cap_idr_bn": 34110.9,
+      "stake_value_idr_bn": 10785.87,
       "as_of": "2026-08-14",
-      "pct_of_nav": 15.2
+      "pct_of_nav": 15.4
     },
     {
       "ticker": "MDKA",
       "company": "PT Merdeka Copper Gold Tbk",
-      "price_idr": 2880.0,
+      "price_idr": 2920.0,
       "shares_outstanding_bn": 24.42,
       "stake_pct": 19.37,
-      "market_cap_idr_bn": 70329.6,
-      "stake_value_idr_bn": 13622.84,
+      "market_cap_idr_bn": 71306.4,
+      "stake_value_idr_bn": 13812.05,
       "as_of": "2026-08-13",
-      "pct_of_nav": 19.93
+      "pct_of_nav": 19.73
     },
     {
       "ticker": "ADRO",
       "company": "PT Alamtri Resources Indonesia Tbk",
-      "price_idr": 2650.0,
+      "price_idr": 2740.0,
       "shares_outstanding_bn": 28.8,
       "stake_pct": 16.52,
-      "market_cap_idr_bn": 76320.0,
-      "stake_value_idr_bn": 12608.06,
+      "market_cap_idr_bn": 78912.0,
+      "stake_value_idr_bn": 13036.26,
       "as_of": "2026-08-13",
-      "pct_of_nav": 18.44
+      "pct_of_nav": 18.62
     },
     {
       "ticker": "AADI",
       "company": "PT Adaro Andalan Indonesia Tbk",
-      "price_idr": 10650.0,
+      "price_idr": 11175.0,
       "shares_outstanding_bn": 7.79,
       "stake_pct": 15.18,
-      "market_cap_idr_bn": 82963.5,
-      "stake_value_idr_bn": 12593.86,
+      "market_cap_idr_bn": 87053.25,
+      "stake_value_idr_bn": 13214.68,
       "as_of": "2026-08-13",
-      "pct_of_nav": 18.42
+      "pct_of_nav": 18.87
     },
     {
       "ticker": "MPMX",
       "company": "PT Mitra Pinasthika Mustika Tbk",
-      "price_idr": 1025.0,
+      "price_idr": 1030.0,
       "shares_outstanding_bn": 4.39,
       "stake_pct": 57.67,
-      "market_cap_idr_bn": 4499.75,
-      "stake_value_idr_bn": 2595.01,
+      "market_cap_idr_bn": 4521.7,
+      "stake_value_idr_bn": 2607.66,
       "as_of": "2026-08-16",
-      "pct_of_nav": 3.8
+      "pct_of_nav": 3.72
     },
     {
       "ticker": "AGII",
       "company": "PT Samator Indo Gas Tbk",
-      "price_idr": 3000.0,
+      "price_idr": 3020.0,
       "shares_outstanding_bn": 3.07,
       "stake_pct": 10,
-      "market_cap_idr_bn": 9210.0,
-      "stake_value_idr_bn": 921.0,
+      "market_cap_idr_bn": 9271.4,
+      "stake_value_idr_bn": 927.14,
       "as_of": "2026-08-13",
-      "pct_of_nav": 1.35
+      "pct_of_nav": 1.32
     },
     {
       "ticker": "NRCA",
       "company": "PT Nusa Raya Cipta Tbk",
-      "price_idr": 585.0,
+      "price_idr": 590.0,
       "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
-      "market_cap_idr_bn": 1462.5,
-      "stake_value_idr_bn": 87.46,
+      "market_cap_idr_bn": 1475.0,
+      "stake_value_idr_bn": 88.21,
       "as_of": "2026-08-14",
       "pct_of_nav": 0.13
     }
   ],
-  "total_stake_value_idr_bn": 52821.23,
+  "total_stake_value_idr_bn": 54471.87,
   "non_listed_investment_idr_bn": 15469.238,
   "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
   "debt_idr_bn": 795.96,
   "debt_as_of": "2026-08-17",
   "cash_idr_bn": 870.895,
   "cash_as_of": "2026-08-13",
-  "nav_idr_bn": 68365.41,
+  "nav_idr_bn": 70016.04,
   "srtg_shares_outstanding_bn": 13.55,
-  "nav_per_share_idr": 5045.42,
+  "nav_per_share_idr": 5167.24,
   "srtg_price_idr": 1805.0,
   "srtg_market_cap_idr_bn": 24457.75,
-  "discount_to_nav_pct": 64.22,
-  "jci_idx": 6595.77587890625
+  "discount_to_nav_pct": 65.07,
+  "jci_idx": 6667.89111328125
 }
