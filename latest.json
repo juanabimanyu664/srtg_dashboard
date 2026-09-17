@@ -1,97 +1,97 @@
 {
-  "generated_at_utc": "2026-09-16T15:08:28Z",
-  "as_of_date": "2026-09-16",
+  "generated_at_utc": "2026-09-17T15:15:20Z",
+  "as_of_date": "2026-09-17",
   "holdings": [
     {
       "ticker": "TBIG",
       "company": "PT Tower Bersama Infrastructure Tbk",
-      "price_idr": 1435.0,
+      "price_idr": 1430.0,
       "shares_outstanding_bn": 22.59,
       "stake_pct": 31.62,
-      "market_cap_idr_bn": 32416.65,
-      "stake_value_idr_bn": 10250.14,
+      "market_cap_idr_bn": 32303.7,
+      "stake_value_idr_bn": 10214.43,
       "as_of": "2026-08-14",
-      "pct_of_nav": 14.64
+      "pct_of_nav": 14.5
     },
     {
       "ticker": "MDKA",
       "company": "PT Merdeka Copper Gold Tbk",
-      "price_idr": 2850.0,
+      "price_idr": 2870.0,
       "shares_outstanding_bn": 24.42,
       "stake_pct": 19.37,
-      "market_cap_idr_bn": 69597.0,
-      "stake_value_idr_bn": 13480.94,
+      "market_cap_idr_bn": 70085.4,
+      "stake_value_idr_bn": 13575.54,
       "as_of": "2026-08-13",
-      "pct_of_nav": 19.26
+      "pct_of_nav": 19.28
     },
     {
       "ticker": "ADRO",
       "company": "PT Alamtri Resources Indonesia Tbk",
-      "price_idr": 2600.0,
+      "price_idr": 2670.0,
       "shares_outstanding_bn": 28.8,
       "stake_pct": 16.52,
-      "market_cap_idr_bn": 74880.0,
-      "stake_value_idr_bn": 12370.18,
+      "market_cap_idr_bn": 76896.0,
+      "stake_value_idr_bn": 12703.22,
       "as_of": "2026-08-13",
-      "pct_of_nav": 17.67
+      "pct_of_nav": 18.04
     },
     {
       "ticker": "AADI",
       "company": "PT Adaro Andalan Indonesia Tbk",
-      "price_idr": 12400.0,
+      "price_idr": 12375.0,
       "shares_outstanding_bn": 7.79,
       "stake_pct": 15.18,
-      "market_cap_idr_bn": 96596.0,
-      "stake_value_idr_bn": 14663.27,
+      "market_cap_idr_bn": 96401.25,
+      "stake_value_idr_bn": 14633.71,
       "as_of": "2026-08-13",
-      "pct_of_nav": 20.95
+      "pct_of_nav": 20.78
     },
     {
       "ticker": "MPMX",
       "company": "PT Mitra Pinasthika Mustika Tbk",
-      "price_idr": 1025.0,
+      "price_idr": 1035.0,
       "shares_outstanding_bn": 4.39,
       "stake_pct": 57.67,
-      "market_cap_idr_bn": 4499.75,
-      "stake_value_idr_bn": 2595.01,
+      "market_cap_idr_bn": 4543.65,
+      "stake_value_idr_bn": 2620.32,
       "as_of": "2026-08-16",
-      "pct_of_nav": 3.71
+      "pct_of_nav": 3.72
     },
     {
       "ticker": "AGII",
       "company": "PT Samator Indo Gas Tbk",
-      "price_idr": 3300.0,
+      "price_idr": 3390.0,
       "shares_outstanding_bn": 3.07,
       "stake_pct": 10,
-      "market_cap_idr_bn": 10131.0,
-      "stake_value_idr_bn": 1013.1,
+      "market_cap_idr_bn": 10407.3,
+      "stake_value_idr_bn": 1040.73,
       "as_of": "2026-08-13",
-      "pct_of_nav": 1.45
+      "pct_of_nav": 1.48
     },
     {
       "ticker": "NRCA",
       "company": "PT Nusa Raya Cipta Tbk",
-      "price_idr": 540.0,
+      "price_idr": 610.0,
       "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
-      "market_cap_idr_bn": 1350.0,
-      "stake_value_idr_bn": 80.73,
+      "market_cap_idr_bn": 1525.0,
+      "stake_value_idr_bn": 91.2,
       "as_of": "2026-08-14",
-      "pct_of_nav": 0.12
+      "pct_of_nav": 0.13
     }
   ],
-  "total_stake_value_idr_bn": 54453.37,
+  "total_stake_value_idr_bn": 54879.15,
   "non_listed_investment_idr_bn": 15469.238,
   "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
   "debt_idr_bn": 795.96,
   "debt_as_of": "2026-08-17",
   "cash_idr_bn": 870.895,
   "cash_as_of": "2026-08-13",
-  "nav_idr_bn": 69997.54,
+  "nav_idr_bn": 70423.32,
   "srtg_shares_outstanding_bn": 13.55,
-  "nav_per_share_idr": 5165.87,
+  "nav_per_share_idr": 5197.29,
   "srtg_price_idr": 1770.0,
   "srtg_market_cap_idr_bn": 23983.5,
-  "discount_to_nav_pct": 65.74,
-  "jci_idx": 6436.85302734375
+  "discount_to_nav_pct": 65.94,
+  "jci_idx": 6462.43115234375
 }
