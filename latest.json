@@ -1,97 +1,97 @@
 {
-  "generated_at_utc": "2026-10-02T16:20:43Z",
-  "as_of_date": "2026-10-02",
+  "generated_at_utc": "2026-10-05T19:22:28Z",
+  "as_of_date": "2026-10-05",
   "holdings": [
     {
       "ticker": "TBIG",
       "company": "PT Tower Bersama Infrastructure Tbk",
-      "price_idr": 1445.0,
+      "price_idr": 1430.0,
       "shares_outstanding_bn": 22.59,
       "stake_pct": 31.62,
-      "market_cap_idr_bn": 32642.55,
-      "stake_value_idr_bn": 10321.57,
+      "market_cap_idr_bn": 32303.7,
+      "stake_value_idr_bn": 10214.43,
       "as_of": "2026-08-14",
-      "pct_of_nav": 15.06
+      "pct_of_nav": 14.66
     },
     {
       "ticker": "MDKA",
       "company": "PT Merdeka Copper Gold Tbk",
-      "price_idr": 2850.0,
+      "price_idr": 2920.0,
       "shares_outstanding_bn": 24.42,
       "stake_pct": 19.37,
-      "market_cap_idr_bn": 69597.0,
-      "stake_value_idr_bn": 13480.94,
+      "market_cap_idr_bn": 71306.4,
+      "stake_value_idr_bn": 13812.05,
       "as_of": "2026-08-13",
-      "pct_of_nav": 19.66
+      "pct_of_nav": 19.82
     },
     {
       "ticker": "ADRO",
       "company": "PT Alamtri Resources Indonesia Tbk",
-      "price_idr": 2500.0,
+      "price_idr": 2590.0,
       "shares_outstanding_bn": 28.8,
       "stake_pct": 16.52,
-      "market_cap_idr_bn": 72000.0,
-      "stake_value_idr_bn": 11894.4,
+      "market_cap_idr_bn": 74592.0,
+      "stake_value_idr_bn": 12322.6,
       "as_of": "2026-08-13",
-      "pct_of_nav": 17.35
+      "pct_of_nav": 17.68
     },
     {
       "ticker": "AADI",
       "company": "PT Adaro Andalan Indonesia Tbk",
-      "price_idr": 11550.0,
+      "price_idr": 11950.0,
       "shares_outstanding_bn": 7.79,
       "stake_pct": 15.18,
-      "market_cap_idr_bn": 89974.5,
-      "stake_value_idr_bn": 13658.13,
+      "market_cap_idr_bn": 93090.5,
+      "stake_value_idr_bn": 14131.14,
       "as_of": "2026-08-13",
-      "pct_of_nav": 19.92
+      "pct_of_nav": 20.28
     },
     {
       "ticker": "MPMX",
       "company": "PT Mitra Pinasthika Mustika Tbk",
-      "price_idr": 1015.0,
+      "price_idr": 1020.0,
       "shares_outstanding_bn": 4.39,
       "stake_pct": 57.67,
-      "market_cap_idr_bn": 4455.85,
-      "stake_value_idr_bn": 2569.69,
+      "market_cap_idr_bn": 4477.8,
+      "stake_value_idr_bn": 2582.35,
       "as_of": "2026-08-16",
-      "pct_of_nav": 3.75
+      "pct_of_nav": 3.71
     },
     {
       "ticker": "AGII",
       "company": "PT Samator Indo Gas Tbk",
-      "price_idr": 3290.0,
+      "price_idr": 3260.0,
       "shares_outstanding_bn": 3.07,
       "stake_pct": 10,
-      "market_cap_idr_bn": 10100.3,
-      "stake_value_idr_bn": 1010.03,
+      "market_cap_idr_bn": 10008.2,
+      "stake_value_idr_bn": 1000.82,
       "as_of": "2026-08-13",
-      "pct_of_nav": 1.47
+      "pct_of_nav": 1.44
     },
     {
       "ticker": "NRCA",
       "company": "PT Nusa Raya Cipta Tbk",
-      "price_idr": 525.0,
+      "price_idr": 545.0,
       "shares_outstanding_bn": 2.5,
       "stake_pct": 5.98,
-      "market_cap_idr_bn": 1312.5,
-      "stake_value_idr_bn": 78.49,
+      "market_cap_idr_bn": 1362.5,
+      "stake_value_idr_bn": 81.48,
       "as_of": "2026-08-14",
-      "pct_of_nav": 0.11
+      "pct_of_nav": 0.12
     }
   ],
-  "total_stake_value_idr_bn": 53013.25,
+  "total_stake_value_idr_bn": 54144.86,
   "non_listed_investment_idr_bn": 15469.238,
   "non_listed_investment_note": "User estimate for unlisted holdings (Brawijaya Hospital, ZAP, Xurya, Forest Carbon, MGM Bosco, BDIA/Digital Realty JV, Sihayo Gold, Interra Resources, PALM stake, etc.) -- not company-disclosed.",
   "debt_idr_bn": 795.96,
   "debt_as_of": "2026-08-17",
   "cash_idr_bn": 870.895,
   "cash_as_of": "2026-08-13",
-  "nav_idr_bn": 68557.42,
+  "nav_idr_bn": 69689.03,
   "srtg_shares_outstanding_bn": 13.55,
-  "nav_per_share_idr": 5059.59,
-  "srtg_price_idr": 1710.0,
-  "srtg_market_cap_idr_bn": 23170.5,
-  "discount_to_nav_pct": 66.2,
-  "jci_idx": 6036.88818359375
+  "nav_per_share_idr": 5143.1,
+  "srtg_price_idr": 1730.0,
+  "srtg_market_cap_idr_bn": 23441.5,
+  "discount_to_nav_pct": 66.36,
+  "jci_idx": NaN
 }
